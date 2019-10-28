@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Browservus\Browservus.WebBrowserContainer\Browservus.WebBrowserContainer.csproj" />
+    <ProjectReference Include="..\Browservus.SharedResources\Browservus.SharedResources.csproj" />
   </ItemGroup>
 
 </Project>

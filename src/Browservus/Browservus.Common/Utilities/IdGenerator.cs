@@ -22,7 +22,7 @@ namespace StEn.Browservus.Common.Utilities
 				buffer[3] = Prefix[3];
 				buffer[4] = Prefix[4];
 				buffer[5] = Prefix[5];
-				buffer[6] = '-';
+				buffer[6] = '_';
 				return buffer;
 			});
 
@@ -41,7 +41,7 @@ namespace StEn.Browservus.Common.Utilities
 		public static IDGenerator Instance { get; } = new IDGenerator();
 
 		/// <summary>
-		/// Gets an ID. e.g: <c>XOGLN1-0HLHI1F5INOFA</c>.
+		/// Gets an ID. e.g: <c>XOGLN1_0HLHI1F5INOFA</c>.
 		/// </summary>
 		public string Next => GenerateImpl(Interlocked.Increment(ref lastId));
 

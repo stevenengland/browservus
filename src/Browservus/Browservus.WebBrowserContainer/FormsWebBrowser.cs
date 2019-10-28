@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Nito.AsyncEx.Synchronous;
 using StEn.Browservus.BrowserApi.Browser;
 using StEn.Browservus.BrowserApi.Browser.EvalEntities;
+using StEn.Browservus.Common.Exceptions;
 using StEn.Browservus.WebBrowserContainer.Extensions;
 
 namespace StEn.Browservus.WebBrowserContainer
@@ -22,16 +23,22 @@ namespace StEn.Browservus.WebBrowserContainer
 
 		public async Task<string> GetJavascriptResponseAsync(string javascript)
 		{
-			// mapping machen die aufrufenden Funktionen, hier wird nur string zurückgeliefert.
-			// hier kann error handling hinein.
-
-			var response = string.Empty;
+			string response;
 			try
 			{
-				var jsResponse = await Task.Run(() => this.browser.SafeInvoke(x => x.Document.InvokeScript("eval", new[] { javascript })).ToString());
+				var jsResponseObject = await Task.Run(() => this.browser.SafeInvoke(x => x.Document.InvokeScript("eval", new[] { javascript })));
+				if (jsResponseObject == null)
+				{
+					throw new BrowservusException("The evaluation of Javascript returned null. One possible reason is when there is no Javascript content within the page that was loaded (e.g. not a single <script> tag was found).");
+				}
+
+				response = jsResponseObject.ToString();
 			}
-			catch
+
+			// If 'Document' is not available
+			catch (NullReferenceException)
 			{
+				throw new BrowservusException("Cannot invoke Javascript, because the browser document is null.");
 			}
 
 			return response;

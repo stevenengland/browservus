@@ -11,9 +11,10 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 	{
 		private IJavascriptEvaluator javascriptEvaluator;
 
-		public HtmlElement(IJavascriptEvaluator javascriptEvaluator)
+		public HtmlElement(string id, IJavascriptEvaluator javascriptEvaluator)
 		{
 			this.javascriptEvaluator = javascriptEvaluator;
+			this.BrowservusId = id;
 		}
 
 		public string BrowservusId { get; }

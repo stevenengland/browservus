@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Browservus.WebBrowserContai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Browservus.BrowserApi.Tests", "Browservus.Test\Browservus.BrowserApi.Tests\Browservus.BrowserApi.Tests.csproj", "{B278C51B-2C23-4402-BA80-3B28DE2EDE52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Browservus.SharedResources", "Browservus.Test\Browservus.SharedResources\Browservus.SharedResources.csproj", "{363692A0-DFAD-4356-A065-6F0A455A13BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{B278C51B-2C23-4402-BA80-3B28DE2EDE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B278C51B-2C23-4402-BA80-3B28DE2EDE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B278C51B-2C23-4402-BA80-3B28DE2EDE52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{363692A0-DFAD-4356-A065-6F0A455A13BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{363692A0-DFAD-4356-A065-6F0A455A13BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{363692A0-DFAD-4356-A065-6F0A455A13BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{363692A0-DFAD-4356-A065-6F0A455A13BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{AFC2BEE9-65C4-4CEE-B117-A1C5D8AC2478} = {8390A04F-54DC-42E5-9129-650EB4A7B0E5}
 		{9F276F8D-88A2-4F77-8609-1D56C4E77888} = {16634C2E-9988-48E8-A818-5677CA8B9B1C}
 		{B278C51B-2C23-4402-BA80-3B28DE2EDE52} = {16634C2E-9988-48E8-A818-5677CA8B9B1C}
+		{363692A0-DFAD-4356-A065-6F0A455A13BD} = {16634C2E-9988-48E8-A818-5677CA8B9B1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {089BDE0F-0D1E-4ACE-97DB-A485FECCF479}

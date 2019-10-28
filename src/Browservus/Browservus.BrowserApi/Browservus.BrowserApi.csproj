@@ -17,4 +17,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Browservus.Common\Browservus.Common.csproj" />
+  </ItemGroup>
+
 </Project>

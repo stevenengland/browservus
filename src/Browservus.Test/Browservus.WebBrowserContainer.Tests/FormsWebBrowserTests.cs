@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Browservus.SharedResources;
+using StEn.Browservus.Common.Exceptions;
 using StEn.Browservus.WebBrowserContainer;
 using StEn.Browservus.WebBrowserContainer.Extensions;
 using StEn.Browservus.WebBrowserContainer.Utilities;
@@ -13,8 +15,13 @@ namespace Browservus.WebBrowserContainer.Tests
 {
 	public class FormsWebBrowserTests
 	{
+		public FormsWebBrowserTests()
+		{
+			Constants.CheckFileExistence();
+		}
+
 		[Fact]
-		public async Task GetElementByIdSucceeds()
+		public async Task GetElementByIdSucceedsAsync()
 		{
 			using var apartment = new MessageLoopApartment();
 			using var cancellationTokenSource = this.CtsFactory(20);
@@ -22,13 +29,31 @@ namespace Browservus.WebBrowserContainer.Tests
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
 			var container = new FormsWebBrowser(webBrowser);
 
-			await apartment.Run(() => webBrowser.NavigateAsync(Constants.WebsiteUri, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
+			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToWorkingWebsites.FullWorkingExample, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 			apartment.Invoke(() =>
 			{
-				var element = Task.Run(() => container.Document.GetElementByIdAsync("divWithId")).GetAwaiter().GetResult();
-				Assert.True(!string.IsNullOrWhiteSpace(element.BrowservusId)); // would throw out of apartment
+				var test = webBrowser.SafeInvoke(x => x.DocumentText); // would throw out of apartment
 			});
+			var element = await container.Document.GetElementByIdAsync("divWithId");
+			Assert.True(!string.IsNullOrWhiteSpace(element.BrowservusId)); // would throw out of apartment
 		}
+
+		#region IssueTests
+
+		[Fact]
+		public async Task EvalJavascriptFailsIfWebsiteDoesNotContainAnyJavascriptAsync()
+		{
+			using var apartment = new MessageLoopApartment();
+			using var cancellationTokenSource = this.CtsFactory(20);
+			/* create WebBrowser inside MessageLoopApartment */
+			var webBrowser = apartment.Invoke(() => new WebBrowser());
+			var container = new FormsWebBrowser(webBrowser);
+			// If the website does not contain any Javascript it will fail to evaluate new Javascript. 
+			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToIssueWebsites.IssueWithMissingJavascript, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
+			await Assert.ThrowsAsync<BrowservusException>(() => container.Document.GetElementByIdAsync("divWithId")); // would throw out of apartment
+		}
+
+		#endregion
 
 		private CancellationTokenSource CtsFactory(int timeout = 0)
 		{
