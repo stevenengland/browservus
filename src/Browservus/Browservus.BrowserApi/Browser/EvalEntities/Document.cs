@@ -21,7 +21,7 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 
 		public string BrowservusId { get; }
 
-		public async Task<IHtmlElement> GetElementByIdAsync(string id)
+		public async Task<IElement> GetElementByIdAsync(string id)
 		{
 			var replacements = new Dictionary<string, string>()
 			{
@@ -30,7 +30,21 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 			return await this.SingleNode(ResourceHelper.GetEmbeddedResource(this.pathToJsEvalScriptsRoot + "eval_getElementById.js"), replacements);
 		}
 
-		private async Task<IHtmlElement> SingleNode(string javascript, Dictionary<string, string> replacements)
+		public async Task<IElement> QuerySelectorAsync(string selectors)
+		{
+			var replacements = new Dictionary<string, string>()
+			{
+				{ "_SELECTORS_", selectors },
+			};
+			return await this.SingleNode(ResourceHelper.GetEmbeddedResource(this.pathToJsEvalScriptsRoot + "eval_querySelector.js"), replacements);
+		}
+
+		public async Task<IEnumerable<IElement>> QuerySelectorAllAsync(string selectors)
+		{
+			throw new NotImplementedException();
+		}
+
+		private async Task<IElement> SingleNode(string javascript, Dictionary<string, string> replacements)
 		{
 			try
 			{
@@ -41,7 +55,7 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 					javascript = javascript.Replace(key.Key, key.Value);
 				}
 
-				var htmlElement = new HtmlElement(callerId, this.javascriptEvaluator);
+				var element = new Element(callerId, this.javascriptEvaluator);
 				var jsResponseText = await this.javascriptEvaluator.GetJavascriptResponseAsync(javascript);
 				var jsResponse = JsonConvert.DeserializeObject<EvalResponse<string>>(jsResponseText);
 				if (!jsResponse.IsSuccess)
@@ -49,8 +63,7 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 					throw new BrowservusException(jsResponse.ErrorMessage);
 				}
 
-				// JsonConvert.PopulateObject(jsResponseText, htmlElement);
-				return htmlElement;
+				return element;
 			}
 			catch (JsonSerializationException ex)
 			{
