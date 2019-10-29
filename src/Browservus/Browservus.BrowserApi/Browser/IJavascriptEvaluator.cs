@@ -5,5 +5,7 @@ namespace StEn.Browservus.BrowserApi.Browser
 	public interface IJavascriptEvaluator
 	{
 		Task<string> GetJavascriptResponseAsync(string javascript);
+
+		string JavascriptExecutionError { get; }
 	}
 }

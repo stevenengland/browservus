@@ -38,6 +38,7 @@ namespace Browservus.SharedResources
 		public static class PathToIssueWebsites
 		{
 			public static string IssueWithMissingJavascript { get; } = PathToIssueResources + "/site_without_javascript_content.html";
+			public static string IssueWithMissingXuaCompatMetaTag { get; } = PathToIssueResources + "/site_without_xuacompat_meta_tag.html";
 		}
 	}
 }

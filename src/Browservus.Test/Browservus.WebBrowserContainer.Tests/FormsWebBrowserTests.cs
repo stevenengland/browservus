@@ -27,7 +27,7 @@ namespace Browservus.WebBrowserContainer.Tests
 			using var cancellationTokenSource = this.CtsFactory(20);
 			/* create WebBrowser inside MessageLoopApartment */
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
-			var container = new FormsWebBrowser(webBrowser);
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
 
 			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToWorkingWebsites.FullWorkingExample, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 			apartment.Invoke(() =>
@@ -45,7 +45,7 @@ namespace Browservus.WebBrowserContainer.Tests
 			using var cancellationTokenSource = this.CtsFactory(20);
 			/* create WebBrowser inside MessageLoopApartment */
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
-			var container = new FormsWebBrowser(webBrowser);
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
 
 			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToWorkingWebsites.FullWorkingExample, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 
@@ -59,11 +59,11 @@ namespace Browservus.WebBrowserContainer.Tests
 			using var cancellationTokenSource = this.CtsFactory(20);
 			/* create WebBrowser inside MessageLoopApartment */
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
-			var container = new FormsWebBrowser(webBrowser);
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
 
 			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToWorkingWebsites.FullWorkingExample, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 
-			var element = await container.Document.GetElementByIdAsync(".querySelectorClass");
+			var element = await container.Document.QuerySelectorAsync(".querySelectorClass");
 			Assert.True(!string.IsNullOrWhiteSpace(element.BrowservusId));
 		}
 
@@ -74,11 +74,11 @@ namespace Browservus.WebBrowserContainer.Tests
 			using var cancellationTokenSource = this.CtsFactory(20);
 			/* create WebBrowser inside MessageLoopApartment */
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
-			var container = new FormsWebBrowser(webBrowser);
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
 
 			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToWorkingWebsites.FullWorkingExample, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 
-			await Assert.ThrowsAsync<BrowservusException>(() => container.Document.GetElementByIdAsync("someWeirdQuerySelectorThatIsNeverSucceeding"));
+			await Assert.ThrowsAsync<BrowservusException>(() => container.Document.QuerySelectorAsync("someWeirdQuerySelectorThatIsNeverSucceeding"));
 		}
 
 		#region IssueTests
@@ -90,10 +90,25 @@ namespace Browservus.WebBrowserContainer.Tests
 			using var cancellationTokenSource = this.CtsFactory(20);
 			/* create WebBrowser inside MessageLoopApartment */
 			var webBrowser = apartment.Invoke(() => new WebBrowser());
-			var container = new FormsWebBrowser(webBrowser);
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
 			// If the website does not contain any Javascript it will fail to evaluate new Javascript. 
 			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToIssueWebsites.IssueWithMissingJavascript, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
 			await Assert.ThrowsAsync<BrowservusException>(() => container.Document.GetElementByIdAsync("divWithId")); 
+		}
+
+		[Fact]
+		public async Task EvalJavascriptFailsIfWebBrowserCompatModeIsNotSetAsync()
+		{
+			using var apartment = new MessageLoopApartment();
+			using var cancellationTokenSource = this.CtsFactory(20);
+			/* create WebBrowser inside MessageLoopApartment */
+			var webBrowser = apartment.Invoke(() => new WebBrowser());
+			var container = apartment.Invoke(() => new FormsWebBrowser(webBrowser));
+
+			await apartment.Run(() => webBrowser.NavigateAsync(Constants.PathToIssueWebsites.IssueWithMissingXuaCompatMetaTag, ct: cancellationTokenSource.Token), cancellationTokenSource.Token);
+
+			var error = await Assert.ThrowsAsync<BrowservusException>(() => container.Document.QuerySelectorAsync(".querySelectorClass"));
+			Assert.Contains("querySelector", error.Message);
 		}
 
 		#endregion

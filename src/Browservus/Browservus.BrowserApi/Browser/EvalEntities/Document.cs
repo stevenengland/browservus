@@ -57,6 +57,11 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 
 				var element = new Element(callerId, this.javascriptEvaluator);
 				var jsResponseText = await this.javascriptEvaluator.GetJavascriptResponseAsync(javascript);
+				if (string.IsNullOrWhiteSpace(jsResponseText))
+				{
+					throw new BrowservusException("The response of the Javascript evaluation returned an empty answer without a hint to an actual error.");
+				}
+
 				var jsResponse = JsonConvert.DeserializeObject<EvalResponse<string>>(jsResponseText);
 				if (!jsResponse.IsSuccess)
 				{
@@ -69,7 +74,7 @@ namespace StEn.Browservus.BrowserApi.Browser.EvalEntities
 			{
 				throw new BrowservusException("The Javascript evaluation returned an invalid structure.", ex);
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (!(ex is BrowservusException))
 			{
 				throw new BrowservusException("An unknown error occured when evaluating Javascript.", ex);
 			}
